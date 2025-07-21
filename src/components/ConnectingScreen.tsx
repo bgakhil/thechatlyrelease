@@ -50,8 +50,43 @@ const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount }: Conne
   }, [onConnected]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-8 shadow-xl bg-card/80 backdrop-blur-sm border-0">
+    <div className="min-h-screen bg-gradient-background">
+      {/* Header */}
+      <div className="border-b bg-card/80 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="bg-gradient-primary p-2 rounded-full shadow-lg">
+                <Loader2 className="w-6 h-6 text-primary-foreground animate-spin" />
+              </div>
+              <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                Chatly
+              </h1>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 bg-accent/50 rounded-full px-4 py-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <Users className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-medium">
+                  {onlineCount.toLocaleString()} online
+                </span>
+              </div>
+              <Button 
+                onClick={onBack}
+                variant="outline"
+                size="sm"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6">
         <div className="text-center space-y-6">
           {/* Loading Animation */}
           <div className="flex justify-center">
@@ -127,7 +162,7 @@ const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount }: Conne
             </ul>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
