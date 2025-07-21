@@ -114,7 +114,7 @@ const ChatLanding = ({
 
           {/* Right Column - Chat Setup */}
           <div className="lg:pl-8">
-            <Card className="p-8 shadow-xl bg-card/90 backdrop-blur-sm border-0">
+            <Card className="p-8 shadow-xl bg-card/90 backdrop-blur-sm border-0 py-[35px]">
               <div className="space-y-6">
                 <div className="text-center">
                   <h3 className="text-2xl font-bold mb-2">Start Your Journey</h3>
