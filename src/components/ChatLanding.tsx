@@ -5,47 +5,37 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Users, MessageCircle, Globe, X, Sparkles } from 'lucide-react';
 import chatlyLogo from '@/assets/chatly-logo.png';
-
 interface ChatLandingProps {
   onStartChat: (interests: string[]) => void;
   onlineCount: number;
 }
-
-const ChatLanding = ({ onStartChat, onlineCount }: ChatLandingProps) => {
+const ChatLanding = ({
+  onStartChat,
+  onlineCount
+}: ChatLandingProps) => {
   const [interests, setInterests] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
-
-  const popularInterests = [
-    'Music', 'Gaming', 'Movies', 'Sports', 'Art', 'Technology', 'Books', 'Travel',
-    'Cooking', 'Fitness', 'Photography', 'Science', 'Politics', 'Fashion', 'Anime',
-    'Programming', 'Nature', 'History', 'Philosophy', 'Language Learning'
-  ];
-
+  const popularInterests = ['Music', 'Gaming', 'Movies', 'Sports', 'Art', 'Technology', 'Books', 'Travel', 'Cooking', 'Fitness', 'Photography', 'Science', 'Politics', 'Fashion', 'Anime', 'Programming', 'Nature', 'History', 'Philosophy', 'Language Learning'];
   const addInterest = (interest: string) => {
     if (!interests.includes(interest) && interests.length < 5) {
       setInterests([...interests, interest]);
     }
   };
-
   const removeInterest = (interest: string) => {
     setInterests(interests.filter(i => i !== interest));
   };
-
   const handleAddCustomInterest = () => {
     if (inputValue.trim() && !interests.includes(inputValue.trim()) && interests.length < 5) {
       setInterests([...interests, inputValue.trim()]);
       setInputValue('');
     }
   };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleAddCustomInterest();
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-background">
+  return <div className="min-h-screen bg-gradient-background">
       {/* Header */}
       <div className="border-b bg-card/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -99,20 +89,7 @@ const ChatLanding = ({ onStartChat, onlineCount }: ChatLandingProps) => {
             </div>
 
             {/* Stats */}
-            <div className="flex items-center space-x-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">1M+</div>
-                <div className="text-sm text-muted-foreground">Conversations</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">150+</div>
-                <div className="text-sm text-muted-foreground">Countries</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">24/7</div>
-                <div className="text-sm text-muted-foreground">Active Users</div>
-              </div>
-            </div>
+            
 
             {/* Features */}
             <div className="grid grid-cols-2 gap-4 pt-4">
@@ -149,68 +126,37 @@ const ChatLanding = ({ onStartChat, onlineCount }: ChatLandingProps) => {
                 {/* Interest Input */}
                 <div className="space-y-4">
                   <div className="flex space-x-2">
-                    <Input
-                      placeholder="Type an interest..."
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={handleAddCustomInterest}
-                      variant="outline" 
-                      size="sm"
-                      disabled={!inputValue.trim() || interests.length >= 5}
-                    >
+                    <Input placeholder="Type an interest..." value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyPress={handleKeyPress} className="flex-1" />
+                    <Button onClick={handleAddCustomInterest} variant="outline" size="sm" disabled={!inputValue.trim() || interests.length >= 5}>
                       Add
                     </Button>
                   </div>
 
                   {/* Selected Interests */}
-                  {interests.length > 0 && (
-                    <div className="space-y-3">
+                  {interests.length > 0 && <div className="space-y-3">
                       <p className="text-sm font-medium">Your interests:</p>
                       <div className="flex flex-wrap gap-2">
-                        {interests.map((interest) => (
-                          <Badge 
-                            key={interest} 
-                            variant="secondary" 
-                            className="cursor-pointer hover:bg-destructive/20 transition-colors"
-                            onClick={() => removeInterest(interest)}
-                          >
+                        {interests.map(interest => <Badge key={interest} variant="secondary" className="cursor-pointer hover:bg-destructive/20 transition-colors" onClick={() => removeInterest(interest)}>
                             {interest}
                             <X className="w-3 h-3 ml-1" />
-                          </Badge>
-                        ))}
+                          </Badge>)}
                       </div>
-                    </div>
-                  )}
+                    </div>}
 
                   {/* Popular Interests */}
                   <div className="space-y-3">
                     <p className="text-sm font-medium">Popular interests:</p>
                     <div className="flex flex-wrap gap-2">
-                      {popularInterests.slice(0, 12).map((interest) => (
-                        <Badge 
-                          key={interest} 
-                          variant="outline" 
-                          className="cursor-pointer hover:bg-accent transition-colors text-xs"
-                          onClick={() => addInterest(interest)}
-                        >
+                      {popularInterests.slice(0, 12).map(interest => <Badge key={interest} variant="outline" className="cursor-pointer hover:bg-accent transition-colors text-xs" onClick={() => addInterest(interest)}>
                           {interest}
-                        </Badge>
-                      ))}
+                        </Badge>)}
                     </div>
                   </div>
                 </div>
 
                 {/* Start Chat Button */}
                 <div className="space-y-4 pt-2">
-                  <Button 
-                    onClick={() => onStartChat(interests)}
-                    size="lg"
-                    className="w-full bg-gradient-primary hover:scale-[1.02] transition-all duration-200 shadow-lg"
-                  >
+                  <Button onClick={() => onStartChat(interests)} size="lg" className="w-full bg-gradient-primary hover:scale-[1.02] transition-all duration-200 shadow-lg">
                     <Globe className="w-5 h-5 mr-2" />
                     Start Chatting Now
                   </Button>
@@ -224,8 +170,6 @@ const ChatLanding = ({ onStartChat, onlineCount }: ChatLandingProps) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ChatLanding;
