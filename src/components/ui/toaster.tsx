@@ -1,33 +1,17 @@
-import { useToast } from "@/hooks/use-toast"
-import {
-  Toast,
-  ToastClose,
-  ToastDescription,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-} from "@/components/ui/toast"
+// src/App.tsx
+import React from 'react';
+import { Toaster } from './components/ui/toaster';
 
-export function Toaster() {
-  const { toasts } = useToast()
-
+function App() {
   return (
-    <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <Toast key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            {action}
-            <ToastClose />
-          </Toast>
-        )
-      })}
-      <ToastViewport />
-    </ToastProvider>
-  )
+    <>
+      <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+        <h1>Welcome to TheChatly 🚀</h1>
+        <p>This is a random chat web app hosted on GitHub Pages.</p>
+      </main>
+      <Toaster />
+    </>
+  );
 }
+
+export default App;
