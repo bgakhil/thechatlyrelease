@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Vite App to GitHub Pages
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
