@@ -14,7 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chat_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          interests: string[] | null
+          status: string
+          updated_at: string
+          user1_id: string | null
+          user2_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interests?: string[] | null
+          status?: string
+          updated_at?: string
+          user1_id?: string | null
+          user2_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interests?: string[] | null
+          status?: string
+          updated_at?: string
+          user1_id?: string | null
+          user2_id?: string | null
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          message_type: string
+          sender_id: string
+          session_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          sender_id: string
+          session_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          sender_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
