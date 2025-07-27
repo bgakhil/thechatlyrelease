@@ -76,19 +76,45 @@ const ChatLanding = ({
               <h2 className="text-5xl lg:text-6xl font-bold leading-tight">
                 Connect with{' '}
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  people
-                </span>
+                  strangers
+                </span>{' '}
+                worldwide
               </h2>
               
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Anonymous text chat with strangers around the world.
+                Join thousands of people in anonymous text conversations. 
+                Share interests, make friends, and discover new perspectives 
+                from around the globe.
               </p>
+            </div>
+
+            {/* Stats */}
+            
+
+            {/* Features */}
+            <div className="grid grid-cols-2 gap-4 pt-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-muted-foreground">No registration required</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-sm text-muted-foreground">Interest-based matching</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="text-sm text-muted-foreground">Completely anonymous</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span className="text-sm text-muted-foreground">Safe & moderated</span>
+              </div>
             </div>
           </div>
 
           {/* Right Column - Chat Setup */}
           <div className="lg:pl-8">
-            <Card className="p-8 shadow-xl bg-card/90 backdrop-blur-sm border-0 py-[35px]">
+            <Card className="p-8 shadow-xl bg-card/90 backdrop-blur-sm border-0">
               <div className="space-y-6">
                 <div className="text-center">
                   <h3 className="text-2xl font-bold mb-2">Start Your Journey</h3>
