@@ -6,27 +6,25 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Send, UserX, RotateCcw, Users } from 'lucide-react';
 import chatlyLogo from '@/assets/chatly-logo.png';
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'stranger' | 'system';
-  timestamp: Date;
-}
+import type { Message, ChatSession } from '@/hooks/useRealTimeChat';
 
 interface ChatInterfaceProps {
   interests: string[];
   onDisconnect: () => void;
   onNewChat: () => void;
   onlineCount: number;
+  messages: Message[];
+  onSendMessage: (content: string) => Promise<void>;
+  session: ChatSession | null;
+  userId: string;
 }
 
-const ChatInterface = ({ interests, onDisconnect, onNewChat, onlineCount }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const ChatInterface = ({ interests, onDisconnect, onNewChat, onlineCount, messages, onSendMessage, session, userId }: ChatInterfaceProps) => {
   const [inputValue, setInputValue] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const isConnected = session?.status === 'active';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,78 +34,11 @@ const ChatInterface = ({ interests, onDisconnect, onNewChat, onlineCount }: Chat
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    // Simulate connection process
-    const connectTimer = setTimeout(() => {
-      setIsConnected(true);
-      addSystemMessage('You are now connected with a stranger. Say hello!');
-      
-      // Simulate stranger's first message
-      setTimeout(() => {
-        addStrangerMessage('Hello! How are you doing today?');
-      }, 2000);
-    }, Math.random() * 3000 + 1000); // 1-4 seconds
-
-    addSystemMessage('Looking for someone to chat with...');
-
-    return () => clearTimeout(connectTimer);
-  }, []);
-
-  const addSystemMessage = (text: string) => {
-    const message: Message = {
-      id: Date.now().toString(),
-      text,
-      sender: 'system',
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, message]);
-  };
-
-  const addStrangerMessage = (text: string) => {
-    const message: Message = {
-      id: Date.now().toString(),
-      text,
-      sender: 'stranger',
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, message]);
-  };
-
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim() || !isConnected) return;
 
-    const message: Message = {
-      id: Date.now().toString(),
-      text: inputValue.trim(),
-      sender: 'user',
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, message]);
+    await onSendMessage(inputValue.trim());
     setInputValue('');
-
-    // Simulate stranger typing and responding
-    setTimeout(() => {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        
-        // Simple response simulation
-        const responses = [
-          "That's interesting!",
-          "I see, tell me more about that",
-          "Wow, really?",
-          "I totally agree with you",
-          "That's a great point",
-          "I never thought about it that way",
-          "What do you think about that?",
-          "That sounds amazing!"
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        addStrangerMessage(randomResponse);
-      }, Math.random() * 2000 + 1000); // 1-3 seconds
-    }, 500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -118,19 +49,11 @@ const ChatInterface = ({ interests, onDisconnect, onNewChat, onlineCount }: Chat
   };
 
   const handleDisconnect = () => {
-    addSystemMessage('You have disconnected from the chat.');
-    setIsConnected(false);
-    setTimeout(() => {
-      onDisconnect();
-    }, 1000);
+    onDisconnect();
   };
 
   const handleNewChat = () => {
-    addSystemMessage('Starting a new chat...');
-    setIsConnected(false);
-    setTimeout(() => {
-      onNewChat();
-    }, 1000);
+    onNewChat();
   };
 
   return (
@@ -206,26 +129,26 @@ const ChatInterface = ({ interests, onDisconnect, onNewChat, onlineCount }: Chat
           <div className="flex-1 p-4 overflow-y-auto space-y-4">
             {messages.map((message) => (
               <div key={message.id} className="space-y-2">
-                {message.sender === 'system' && (
+                {message.message_type === 'system' && (
                   <div className="flex justify-center">
                     <div className="bg-chat-system text-chat-system-foreground px-3 py-1 rounded-full text-sm">
-                      {message.text}
+                      {message.content}
                     </div>
                   </div>
                 )}
 
-                {message.sender === 'user' && (
+                {message.message_type === 'user' && message.sender_id === userId && (
                   <div className="flex justify-end">
                     <div className="bg-chat-user text-chat-user-foreground px-4 py-2 rounded-2xl rounded-tr-sm max-w-xs lg:max-w-md">
-                      <p className="text-sm">{message.text}</p>
+                      <p className="text-sm">{message.content}</p>
                     </div>
                   </div>
                 )}
 
-                {message.sender === 'stranger' && (
+                {message.message_type === 'user' && message.sender_id !== userId && (
                   <div className="flex justify-start">
                     <div className="bg-chat-stranger text-chat-stranger-foreground px-4 py-2 rounded-2xl rounded-tl-sm max-w-xs lg:max-w-md border">
-                      <p className="text-sm">{message.text}</p>
+                      <p className="text-sm">{message.content}</p>
                     </div>
                   </div>
                 )}

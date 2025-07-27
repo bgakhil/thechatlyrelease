@@ -9,9 +9,10 @@ interface ConnectingScreenProps {
   onBack: () => void;
   onConnected: () => void;
   onlineCount: number;
+  isConnecting?: boolean;
 }
 
-const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount }: ConnectingScreenProps) => {
+const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount, isConnecting = true }: ConnectingScreenProps) => {
   const [dots, setDots] = useState('');
   const [searchText, setSearchText] = useState('Looking for someone to chat with');
 
@@ -37,15 +38,9 @@ const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount }: Conne
       setSearchText(searchTexts[textIndex]);
     }, 2000);
 
-    // Simulate connection after random delay
-    const connectionTimer = setTimeout(() => {
-      onConnected();
-    }, Math.random() * 4000 + 2000); // 2-6 seconds
-
     return () => {
       clearInterval(interval);
       clearInterval(textInterval);
-      clearTimeout(connectionTimer);
     };
   }, [onConnected]);
 
