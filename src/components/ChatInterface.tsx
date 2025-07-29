@@ -65,8 +65,13 @@ const ChatInterface = ({ interests, onDisconnect, onNewChat, onlineCount, messag
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 <img src={chatlyLogo} alt="Chatly" className="w-8 h-8" />
-                <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  Chatly
+                <h1 className="text-2xl font-bold flex items-center">
+                  <span className="text-blue-500">C</span>
+                  <span className="text-purple-500">h</span>
+                  <span className="text-pink-500">a</span>
+                  <span className="text-orange-500">t</span>
+                  <span className="text-green-500">l</span>
+                  <span className="text-cyan-500">y</span>
                 </h1>
               </div>
               
