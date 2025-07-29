@@ -158,6 +158,8 @@ export const useRealTimeChat = (interests: string[]) => {
   useEffect(() => {
     if (!session) return;
 
+    console.log('Setting up realtime for session:', session.id, 'status:', session.status);
+
     // Load existing messages
     const loadMessages = async () => {
       const { data } = await supabase
@@ -167,15 +169,16 @@ export const useRealTimeChat = (interests: string[]) => {
         .order('created_at', { ascending: true });
       
       if (data) {
+        console.log('Loaded messages:', data.length);
         setMessages(data as Message[]);
       }
     };
 
     loadMessages();
 
-    // Set up real-time subscription for messages and session updates in one channel
+    // Set up real-time subscription for messages and session updates
     const realtimeChannel = supabase
-      .channel(`room:${session.id}`)
+      .channel(`room_${session.id}`)
       .on(
         'postgres_changes',
         {
@@ -201,17 +204,6 @@ export const useRealTimeChat = (interests: string[]) => {
           console.log('Session updated:', payload.new);
           const updatedSession = payload.new as ChatSession;
           setSession(updatedSession);
-          
-          // If session became active and we were waiting
-          if (updatedSession.status === 'active' && session.status === 'waiting') {
-            console.log('Session became active, adding connection message');
-            supabase.from('messages').insert({
-              session_id: session.id,
-              sender_id: 'system',
-              content: 'Stranger connected! Start chatting!',
-              message_type: 'system'
-            });
-          }
         }
       )
       .subscribe((status) => {
@@ -225,6 +217,31 @@ export const useRealTimeChat = (interests: string[]) => {
       supabase.removeChannel(realtimeChannel);
     };
   }, [session]);
+
+  // Check for session status changes and trigger connection message
+  useEffect(() => {
+    if (session && session.status === 'active') {
+      console.log('Session is now active, checking if we need to add connection message');
+      // Small delay to ensure the session update is processed
+      setTimeout(async () => {
+        const { data: existingMessages } = await supabase
+          .from('messages')
+          .select('*')
+          .eq('session_id', session.id)
+          .eq('content', 'Stranger connected! Start chatting!');
+        
+        if (!existingMessages || existingMessages.length === 0) {
+          console.log('Adding connection message');
+          await supabase.from('messages').insert({
+            session_id: session.id,
+            sender_id: 'system',
+            content: 'Stranger connected! Start chatting!',
+            message_type: 'system'
+          });
+        }
+      }, 500);
+    }
+  }, [session?.status]);
 
   return {
     messages,

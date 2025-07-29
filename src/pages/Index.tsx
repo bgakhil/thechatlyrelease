@@ -3,13 +3,14 @@ import ChatLanding from '@/components/ChatLanding';
 import ConnectingScreen from '@/components/ConnectingScreen';
 import ChatInterface from '@/components/ChatInterface';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
+import { supabase } from '@/integrations/supabase/client';
 
 type AppState = 'landing' | 'connecting' | 'chatting';
 
 const Index = () => {
   const [appState, setAppState] = useState<AppState>('landing');
   const [userInterests, setUserInterests] = useState<string[]>([]);
-  const [onlineCount, setOnlineCount] = useState(2847); // Simulated online count
+  const [onlineCount, setOnlineCount] = useState(0);
   
   const {
     messages,
@@ -22,18 +23,32 @@ const Index = () => {
     findOrCreateSession
   } = useRealTimeChat(userInterests);
 
-  // Simulate changing online count
+  // Real-time user presence tracking
   useEffect(() => {
-    const interval = setInterval(() => {
-      setOnlineCount(prev => {
-        const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
-        const newCount = Math.max(1000, Math.min(5000, prev + change));
-        return newCount;
-      });
-    }, 5000);
+    const channel = supabase.channel('online_users');
+    
+    // Track this user as online
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await channel.track({
+          user_id: userId,
+          online_at: new Date().toISOString(),
+        });
+      }
+    });
 
-    return () => clearInterval(interval);
-  }, []);
+    // Listen for presence changes
+    channel.on('presence', { event: 'sync' }, () => {
+      const newState = channel.presenceState();
+      const count = Object.keys(newState).length;
+      setOnlineCount(count);
+      console.log('Online users count:', count);
+    });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
 
   const handleStartChat = (interests: string[]) => {
     setUserInterests(interests);
