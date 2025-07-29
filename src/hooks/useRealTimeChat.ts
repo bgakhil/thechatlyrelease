@@ -173,9 +173,9 @@ export const useRealTimeChat = (interests: string[]) => {
 
     loadMessages();
 
-    // Set up real-time subscription for messages
-    const messagesChannel = supabase
-      .channel(`messages:${session.id}`)
+    // Set up real-time subscription for messages and session updates in one channel
+    const realtimeChannel = supabase
+      .channel(`room:${session.id}`)
       .on(
         'postgres_changes',
         {
@@ -185,14 +185,10 @@ export const useRealTimeChat = (interests: string[]) => {
           filter: `session_id=eq.${session.id}`
         },
         (payload) => {
+          console.log('New message received:', payload.new);
           setMessages(prev => [...prev, payload.new as Message]);
         }
       )
-      .subscribe();
-
-    // Set up real-time subscription for session updates
-    const sessionChannel = supabase
-      .channel(`session:${session.id}`)
       .on(
         'postgres_changes',
         {
@@ -202,11 +198,13 @@ export const useRealTimeChat = (interests: string[]) => {
           filter: `id=eq.${session.id}`
         },
         (payload) => {
+          console.log('Session updated:', payload.new);
           const updatedSession = payload.new as ChatSession;
           setSession(updatedSession);
           
           // If session became active and we were waiting
           if (updatedSession.status === 'active' && session.status === 'waiting') {
+            console.log('Session became active, adding connection message');
             supabase.from('messages').insert({
               session_id: session.id,
               sender_id: 'system',
@@ -216,13 +214,15 @@ export const useRealTimeChat = (interests: string[]) => {
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Realtime subscription status:', status, 'for session:', session.id);
+      });
 
-    setChannel(messagesChannel);
+    setChannel(realtimeChannel);
 
     return () => {
-      supabase.removeChannel(messagesChannel);
-      supabase.removeChannel(sessionChannel);
+      console.log('Cleaning up realtime subscription for session:', session.id);
+      supabase.removeChannel(realtimeChannel);
     };
   }, [session]);
 
