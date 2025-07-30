@@ -13,36 +13,6 @@ interface ConnectingScreenProps {
 }
 
 const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount, isConnecting = true }: ConnectingScreenProps) => {
-  const [dots, setDots] = useState('');
-  const [searchText, setSearchText] = useState('Looking for someone to chat with');
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots(prev => {
-        if (prev.length >= 3) return '';
-        return prev + '.';
-      });
-    }, 500);
-
-    const searchTexts = [
-      'Looking for someone to chat with',
-      'Finding the perfect chat partner',
-      'Connecting you with someone interesting',
-      'Searching for common interests',
-      'Almost ready to chat'
-    ];
-
-    let textIndex = 0;
-    const textInterval = setInterval(() => {
-      textIndex = (textIndex + 1) % searchTexts.length;
-      setSearchText(searchTexts[textIndex]);
-    }, 2000);
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(textInterval);
-    };
-  }, [onConnected]);
 
   return (
     <div className="min-h-screen bg-gradient-background">
@@ -96,7 +66,7 @@ const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount, isConne
           {/* Status Text */}
           <div className="space-y-2">
             <h2 className="text-2xl font-bold">
-              {searchText}{dots}
+              Looking for someone to chat with
             </h2>
             <p className="text-muted-foreground">
               Please wait while we find someone for you
