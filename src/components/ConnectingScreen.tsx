@@ -21,9 +21,6 @@ const ConnectingScreen = ({ interests, onBack, onConnected, onlineCount, isConne
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-primary p-2 rounded-full shadow-lg">
-                <Loader2 className="w-6 h-6 text-primary-foreground animate-spin" />
-              </div>
               <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                 Chatly
               </h1>
